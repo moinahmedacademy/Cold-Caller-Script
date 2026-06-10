@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mystery Caller Script — MA Academy</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#F7F7F8;color:#1a1a1a;min-height:100vh}
+  .header{background:#1a1a1a;padding:16px 20px 12px;position:sticky;top:0;z-index:100;border-bottom:3px solid #F5C842}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .header-badge{font-size:10px;color:#F5C842;font-weight:700;letter-spacing:2px;margin-bottom:4px}
+  .header-title{font-size:17px;color:#fff;font-weight:700;line-height:1.2}
+  .header-sub{font-size:11px;color:#999;margin-top:3px}
+  .lang-toggle{display:flex;border-radius:20px;overflow:hidden;border:1.5px solid #444;flex-shrink:0;margin-top:2px}
+  .lang-btn{padding:5px 13px;font-size:11px;font-weight:700;cursor:pointer;border:none;background:transparent;color:#888;transition:all .2s;letter-spacing:.5px}
+  .lang-btn.active{background:#F5C842;color:#1a1a1a}
+  .cat-bar{padding:12px 16px 0;background:#fff;border-bottom:1px solid #eee}
+  .cat-label{font-size:10px;color:#888;font-weight:700;letter-spacing:1px;margin-bottom:8px}
+  .cat-btns{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:12px}
+  .cat-btn{padding:6px 14px;border-radius:20px;border:1.5px solid #ddd;background:#fff;color:#555;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+  .cat-btn.active{border:2px solid #1a1a1a;background:#1a1a1a;color:#F5C842}
+  .phase-tabs{display:flex;overflow-x:auto;background:#fff;border-bottom:1px solid #eee;padding:0 8px;gap:2px;scrollbar-width:none}
+  .phase-tabs::-webkit-scrollbar{display:none}
+  .tab-btn{padding:10px 13px;border:none;border-bottom:3px solid transparent;background:transparent;font-size:11px;font-weight:700;color:#888;cursor:pointer;white-space:nowrap;letter-spacing:.3px;transition:all .2s}
+  .tab-btn.active{border-bottom:3px solid #F5C842;color:#1a1a1a}
+  .content{padding:16px;max-width:720px;margin:0 auto}
+  .phase-header{background:#fff;border-radius:12px;padding:16px 18px;margin-bottom:14px;border:1px solid #eee}
+  .phase-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:20px;margin-bottom:8px}
+  .phase-timing{font-size:11px;color:#888;margin-bottom:8px}
+  .phase-intro{font-size:13px;color:#444;line-height:1.6}
+  .block-label{font-size:10px;font-weight:700;letter-spacing:.8px;margin-bottom:6px;padding-left:2px}
+  .script-card{border-radius:10px;padding:12px 14px;margin-bottom:6px;position:relative;border-width:1.5px;border-style:solid}
+  .line-cat{font-size:10px;font-weight:700;margin-bottom:6px;letter-spacing:.5px}
+  .line-text{font-size:13.5px;line-height:1.8;color:#1a1a1a;padding-right:52px}
+  .copy-btn{position:absolute;top:10px;right:10px;background:#1a1a1a;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;transition:background .2s;min-width:46px}
+  .copy-btn.copied{background:#10B981}
+  .tip-box{background:#FFFBEB;border:1.5px solid #F59E0B;border-radius:10px;padding:10px 14px;display:flex;gap:10px;align-items:flex-start;margin-top:4px}
+  .tip-icon{font-size:16px;line-height:1.4;flex-shrink:0}
+  .tip-text{font-size:12.5px;color:#92400E;line-height:1.6}
+  .nav-btns{display:flex;gap:10px;margin-top:16px}
+  .nav-btn{flex:1;padding:11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid #ddd;background:#fff;color:#1a1a1a}
+  .nav-btn.next{background:#F5C842;border:none;font-weight:700;color:#1a1a1a}
+  .nav-btn:disabled{background:#eee;color:#bbb;cursor:default;border-color:#eee}
+  .progress-bar-wrap{margin-top:14px}
+  .progress-track{height:4px;background:#e5e7eb;border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:#F5C842;border-radius:4px;transition:width .3s ease}
+  .progress-label{font-size:10px;color:#888;text-align:right;margin-top:4px}
+  .download-btn{display:block;margin:18px auto 6px;padding:11px 28px;background:#1a1a1a;color:#F5C842;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-align:center;text-decoration:none;width:fit-content}
+  .footer{text-align:center;font-size:11px;color:#aaa;padding:20px 16px;border-top:1px solid #eee;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-badge">MA ACADEMY — MOIN AHMED</div>
+      <div class="header-title">Mystery Caller Script</div>
+      <div class="header-sub" id="headerSub">Customer ban ke call karo — salesman ban ke nahi</div>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('ur',this)">UR</button>
+      <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+    </div>
+  </div>
+</div>
+
+<div class="cat-bar" id="catBar">
+  <div class="cat-label" id="catLabel">BUSINESS CATEGORY SELECT KARO</div>
+  <div class="cat-btns" id="catBtns"></div>
+</div>
+
+<div class="phase-tabs" id="phaseTabs"></div>
+<div class="content" id="mainContent"></div>
+
+<button class="download-btn" onclick="downloadPage()">Download as HTML File</button>
+<div class="footer">MA Academy &nbsp;|&nbsp; Sir Moin Ahmed &nbsp;|&nbsp; 03483435604</div>
+
+<script>
+const DATA = {
+  ur: {
+    headerSub: "Customer ban ke call karo — salesman ban ke nahi",
+    catLabel: "BUSINESS CATEGORY SELECT KARO",
+    cats: ["Restaurant / Food","Salon / Parlor","Clinic / Doctor","Repair / Service"],
+    catIcons: ["","","",""],
+    phases: [
+      {
+        tag:"Phase 1", label:"The Hook", timing:"0–10 second • Kabhi reveal mat karo ke tum sell kar rahe ho",
+        tagColor:"#FF6B35", tagBg:"#FFF0EB", icon:"",
+        intro:"Tu ek potential customer ban raha hai. Woh samjhenge ke genuinely service chahiye. Isi confusion mein hook hai.",
+        blocks:[
+          {
+            speaker:"TUM KAHO (customer ki tarah)",
+            speakerColor:"#1a1a1a", bg:"#F0F7FF", border:"#3B82F6", catBased:true,
+            lines:[
+              {cat:"Restaurant / Food", text:"Assalam o Alaikum — main aapke restaurant se order karna chahta tha, lekin mujhe koi online order ka option nahi mila, na website na kuch. Kya aap online order lete hain?"},
+              {cat:"Salon / Parlor", text:"Assalam o Alaikum — main appointment book karni thi aapke salon mein, lekin koi online booking system nahi mila. Kaise book karun?"},
+              {cat:"Clinic / Doctor", text:"Assalam o Alaikum — main appointment leni thi doctor sahab ke saath, lekin website par koi option nahi tha. Kya online ho sakta hai?"},
+              {cat:"Repair / Service", text:"Assalam o Alaikum — mujhe aapki service chahiye thi, lekin koi online request ka system nahi mila. Kaise contact karun properly?"}
+            ]
+          }
+        ],
+        tip:"RUKK JAHO. Kuch mat bolo. Woh jawab denge — unka jawab suno. DO NOT reveal karo ke tum developer ho abhi."
+      },
+      {
+        tag:"Phase 2", label:"Unka Jawab = Tumhara Data", timing:"10–40 second • Suno aur steer karo",
+        tagColor:"#7C3AED", tagBg:"#F5F0FF", icon:"",
+        intro:"Woh 3 tarah respond karenge. Sahi wala block use karo.",
+        blocks:[
+          {
+            speaker:"AGAR KAHEIN: 'Haan WhatsApp pe message karo'",
+            speakerColor:"#059669", bg:"#F0FDF4", border:"#10B981",
+            lines:[{text:"\"Sir/Aapa, actually main ek cheez poochna chahta tha — kya kabhi aisa hua ke customer ne WhatsApp message kiya lekin reply nahi mili aur order chala gaya? Main ek solution deta hoon is problem ka, agar interest ho toh.\""}]
+          },
+          {
+            speaker:"AGAR KAHEIN: 'Nahi, sirf aakar lo / call karo'",
+            speakerColor:"#D97706", bg:"#FFFBEB", border:"#F59E0B",
+            lines:[{text:"\"Sir/Aapa, actually main bohot busy rehta hoon — isliye online system dhundh raha tha. Aaj kal sab log pehle online check karte hain. Aap ne kabhi socha ke ek page hota jahan customer seedha order ya appointment de sake — aapke WhatsApp pe directly?\""}]
+          },
+          {
+            speaker:"AGAR KAHEIN: 'Website nahi hai' / Khamoshi",
+            speakerColor:"#DC2626", bg:"#FFF5F5", border:"#EF4444",
+            lines:[{text:"\"Haan sir/aapa, isliye call kiya — main actually ek web developer hoon. Maine socha ke pehle khud try karun booking, taake samjhun ke customer ko kya problem aati hai. Aur exactly wahi problem aayi. Kya main 2 minute mein ek solution bata sakta hoon?\""}]
+          }
+        ],
+        tip:"Yahan tum REVEAL ho rahe ho — lekin ab woh khud interested hain kyunke unhone apni problem feel ki."
+      },
+      {
+        tag:"Phase 3", label:"The Pivot", timing:"40 sec – 2 min • Customer se consultant",
+        tagColor:"#0369A1", tagBg:"#EFF6FF", icon:"",
+        intro:"Ab tum developer ho. Lekin approach abhi bhi solution-first hai — pitch nahi.",
+        blocks:[
+          {
+            speaker:"TUM KAHO",
+            speakerColor:"#1a1a1a", bg:"#F0F7FF", border:"#3B82F6",
+            lines:[{text:"\"Sir/Aapa main Moin hoon — main Karachi mein local businesses ke liye ek cheez bana raha hoon. Ek simple page — sirf ek — jahan aapka customer seedha aapke WhatsApp pe order ya appointment bhej sake. Koi third party nahi, koi commission nahi. Customer click karta hai, message directly aapke paas aata hai. Maine 2 din pehle ek [restaurant/salon/clinic] ke liye banaya — pehle hafte mein 6 new WhatsApp inquiries aayi.\""}]
+          }
+        ],
+        tip:"Ruko. Kuch mat bolo. 3 second silence aane do. Woh poochhenge — 'kitna kharcha hoga?' — yeh buying signal hai."
+      },
+      {
+        tag:"Phase 4", label:"Price Bina Hichkichaye", timing:"2–3 min • Value pehle, number baad mein",
+        tagColor:"#059669", tagBg:"#ECFDF5", icon:"",
+        intro:"Jab price poochein — pehle value batao, phir number. Kabhi number se shuru mat karo.",
+        blocks:[
+          {
+            speaker:"AGAR PRICE POOCHEIN",
+            speakerColor:"#1a1a1a", bg:"#F0FDF4", border:"#10B981",
+            lines:[{text:"\"Sir/Aapa pehle ek cheez batao — ek naya customer aapke paas aata hai toh average kitna spend karta hai? Rs 500? Rs 1000? Ab socho — agar yeh page sirf 5 extra customers bheje ek mahine mein — aapka kharcha pehle hafte mein nikal jaata hai. Page ki cost Rs 25,000 ek baar — aur saal mein sirf Rs 8,000 renewal. Ek baar ka investment, saalon ka fayda.\""}]
+          },
+          {
+            speaker:"AGAR HESITATE KAREIN PRICE PAR",
+            speakerColor:"#D97706", bg:"#FFFBEB", border:"#F59E0B",
+            lines:[{text:"\"Sir/Aapa bilkul — isliye humara installment option bhi hai. Rs 12,500 abhi, Rs 12,500 jab page live ho jaaye. Aap risk nahi le rahe — jab kaam aapke saamne ho, tab baaki dena.\""}]
+          }
+        ],
+        tip:"Price ke baad CHUP raho. Jo pehle bolta hai woh haarta hai. Unka jawab aane do."
+      },
+      {
+        tag:"Phase 5", label:"The Close", timing:"3–4 min • Chota haan maango",
+        tagColor:"#1a1a1a", tagBg:"#F3F4F6", icon:"",
+        intro:"Bada commitment mat maango. Chota step maango. Har chota haan deal ke qarib le jaata hai.",
+        blocks:[
+          {
+            speaker:"CLOSE #1 — Demo Close (Safest)",
+            speakerColor:"#059669", bg:"#F0FDF4", border:"#10B981",
+            lines:[{text:"\"Sir/Aapa ek kaam karo — mujhe apna WhatsApp number do, main aapko ek demo link bhejtaa hoon. Sirf 2 minute mein dekh lena. Koi commitment nahi. Aap khud decide karna.\""}]
+          },
+          {
+            speaker:"CLOSE #2 — Urgency Close",
+            speakerColor:"#D97706", bg:"#FFFBEB", border:"#F59E0B",
+            lines:[{text:"\"Sir/Aapa main is hafte 3 pages bana raha hoon — ek slot available hai. Agar aaj confirm karein toh aapka page 4 din mein live hoga. Warna next slot 10-12 din baad hai.\""}]
+          },
+          {
+            speaker:"CLOSE #3 — Competitor Close",
+            speakerColor:"#DC2626", bg:"#FFF5F5", border:"#EF4444",
+            lines:[{text:"\"Sir/Aapa seedha baat karta hoon — aapke area mein ek [same business] already yeh page use kar raha hai. Jab koi Google karta hai, unka page pehle aata hai, aapka nahi. Main actually unka page bana raha tha jab maine aapko dhundha.\""}]
+          }
+        ],
+        tip:"Teeno closes memorize karo. Situation ke hisaab se use karo — drama nahi, sirf confidence."
+      },
+      {
+        tag:"Objections", label:"Jawab — Naye Style Mein", timing:"Jab woh pushback karein",
+        tagColor:"#6B7280", tagBg:"#F3F4F6", icon:"",
+        intro:"Purane script mein yeh objections isliye aate the kyunke tum salesman the. Ab tum consultant ho — jawab bilkul alag hain.",
+        blocks:[
+          {speaker:"\"Not interested\"", speakerColor:"#DC2626", bg:"#FFF5F5", border:"#EF4444",
+            lines:[{text:"\"Sir/Aapa main bhi nahi hota agar koi random cheez bechne aata. Main woh nahi kar raha — maine khud aapke business mein customer ban ke dekha ke kya missing hai. Sirf woh bata raha hoon. 30 second?\""}]},
+          {speaker:"\"In-house team hai\"", speakerColor:"#7C3AED", bg:"#F5F0FF", border:"#8B5CF6",
+            lines:[{text:"\"Sir/Aapa mashallah — in-house team hona acha hai. Ek quick sawaal: kya unka banaya page Google par 'near me' search mein show hota hai? Agar haan, toh bilkul zaroorat nahi. Agar nahi — toh woh team page bana rahi hai lekin traffic nahi aa raha.\""}]},
+          {speaker:"\"Busy hoon / baad mein\"", speakerColor:"#D97706", bg:"#FFFBEB", border:"#F59E0B",
+            lines:[{text:"\"Bilkul sir/aapa — kab acha time hoga? Kal subah 10 baje ya sham 5 baje? Main exactly us waqt call karunga.\" [Commitment lo — vague 'baad mein' mat chodo]"}]},
+          {speaker:"Rude / Hang up", speakerColor:"#6B7280", bg:"#F9FAFB", border:"#D1D5DB",
+            lines:[{text:"Kuch mat kaho. Log karo. Next dial karo. Woh tumhara client nahi tha — next wala hai. Ek rude call = 10 second reset, phir aage."}]}
+        ],
+        tip:"Mystery caller approach mein 'not interested' 60% kam aata hai — kyunke tum ne salesman ki tarah shuru hi nahi kiya."
+      }
+    ]
+  },
+  en: {
+    headerSub: "Be the customer, not the salesman",
+    catLabel: "SELECT BUSINESS CATEGORY",
+    cats: ["Restaurant / Food","Salon / Parlor","Clinic / Doctor","Repair / Service"],
+    catIcons: ["","","",""],
+    phases: [
+      {
+        tag:"Phase 1", label:"The Hook", timing:"0–10 seconds • Never reveal you're selling",
+        tagColor:"#FF6B35", tagBg:"#FFF0EB", icon:"",
+        intro:"You're pretending to be a potential customer. They'll think you genuinely need their service. That confusion is the hook.",
+        blocks:[
+          {
+            speaker:"YOU SAY (as a customer)",
+            speakerColor:"#1a1a1a", bg:"#F0F7FF", border:"#3B82F6", catBased:true,
+            lines:[
+              {cat:"Restaurant / Food", text:"Hello — I wanted to place an order from your restaurant, but I couldn't find any online ordering option — no website, nothing. Do you take online orders?"},
+              {cat:"Salon / Parlor", text:"Hello — I was trying to book an appointment at your salon, but I couldn't find any online booking system. How do I book?"},
+              {cat:"Clinic / Doctor", text:"Hello — I was trying to book an appointment with the doctor, but there was no option on your website. Is online booking possible?"},
+              {cat:"Repair / Service", text:"Hello — I needed your service, but I couldn't find any way to submit a request online. How do I get in touch properly?"}
+            ]
+          }
+        ],
+        tip:"STOP. Say nothing. Let them respond. Do NOT reveal you're a developer yet. Their answer is your opening."
+      },
+      {
+        tag:"Phase 2", label:"Their Response = Your Data", timing:"10–40 seconds • Listen and steer",
+        tagColor:"#7C3AED", tagBg:"#F5F0FF", icon:"",
+        intro:"They'll respond in one of 3 ways. Use the matching block.",
+        blocks:[
+          {
+            speaker:"IF THEY SAY: 'WhatsApp me / just call us'",
+            speakerColor:"#059669", bg:"#F0FDF4", border:"#10B981",
+            lines:[{text:"\"Actually, I wanted to ask — has it ever happened that a customer messaged on WhatsApp but didn't get a reply in time, and the order just went somewhere else? I have a solution for exactly that, if you're open to hearing it.\""}]
+          },
+          {
+            speaker:"IF THEY SAY: 'Come in person / call us'",
+            speakerColor:"#D97706", bg:"#FFFBEB", border:"#F59E0B",
+            lines:[{text:"\"Honestly I'm quite busy these days — that's why I was looking for an online option. Most people today check online first. Have you ever thought about having a single page where customers can order or book directly — straight to your WhatsApp?\""}]
+          },
+          {
+            speaker:"IF THEY SAY: 'No website' / Silence",
+            speakerColor:"#DC2626", bg:"#FFF5F5", border:"#EF4444",
+            lines:[{text:"\"That's actually why I called — I'm a web developer. I wanted to try booking as a customer first, to understand what problem they face. And I faced exactly that problem. Can I take 2 minutes to explain a solution?\""}]
+          }
+        ],
+        tip:"This is where you reveal yourself — but now they're already interested because they felt the problem firsthand."
+      },
+      {
+        tag:"Phase 3", label:"The Pivot", timing:"40 sec – 2 min • Customer to consultant",
+        tagColor:"#0369A1", tagBg:"#EFF6FF", icon:"",
+        intro:"Now you're the developer. But the approach is still solution-first — not a pitch.",
+        blocks:[
+          {
+            speaker:"YOU SAY",
+            speakerColor:"#1a1a1a", bg:"#F0F7FF", border:"#3B82F6",
+            lines:[{text:"\"My name is Moin — I build something specific for local businesses in Karachi. One simple page — just one — where your customer can send an order or book an appointment directly to your WhatsApp. No third party, no commission. Customer clicks, message comes straight to you. I built one for a [restaurant/salon/clinic] 2 days ago — they got 6 new WhatsApp inquiries in the first week.\""}]
+          }
+        ],
+        tip:"Stop. Say nothing. Let 3 seconds of silence sit. They'll ask 'how much does it cost?' — that's the buying signal."
+      },
+      {
+        tag:"Phase 4", label:"Price Without Flinching", timing:"2–3 min • Value first, number second",
+        tagColor:"#059669", tagBg:"#ECFDF5", icon:"",
+        intro:"When they ask price — lead with value, not the number. Never open with the price.",
+        blocks:[
+          {
+            speaker:"IF THEY ASK PRICE",
+            speakerColor:"#1a1a1a", bg:"#F0FDF4", border:"#10B981",
+            lines:[{text:"\"Let me ask you something first — when a new customer visits you, what do they spend on average? Rs 500? Rs 1000? Now think — if this page brings just 5 extra customers in a month, your investment is recovered in the first week. The page costs Rs 25,000 one time — and just Rs 8,000 per year after that. One investment, years of results.\""}]
+          },
+          {
+            speaker:"IF THEY HESITATE ON PRICE",
+            speakerColor:"#D97706", bg:"#FFFBEB", border:"#F59E0B",
+            lines:[{text:"\"Completely understand — that's why we also have an installment option. Rs 12,500 now, Rs 12,500 when the page goes live. You're not taking any risk — you pay the balance only when you see the finished work.\""}]
+          }
+        ],
+        tip:"After the price — go quiet. Whoever speaks first loses. Let them respond."
+      },
+      {
+        tag:"Phase 5", label:"The Close", timing:"3–4 min • Ask for a small yes",
+        tagColor:"#1a1a1a", tagBg:"#F3F4F6", icon:"",
+        intro:"Don't ask for a big commitment. Ask for a small step. Every small yes brings the deal closer.",
+        blocks:[
+          {
+            speaker:"CLOSE #1 — Demo Close (Safest)",
+            speakerColor:"#059669", bg:"#F0FDF4", border:"#10B981",
+            lines:[{text:"\"One thing — give me your WhatsApp number and I'll send you a demo link. Just take 2 minutes to look at it. No commitment. You decide. Is the number on Google the right one?\""}]
+          },
+          {
+            speaker:"CLOSE #2 — Urgency Close",
+            speakerColor:"#D97706", bg:"#FFFBEB", border:"#F59E0B",
+            lines:[{text:"\"I'm building 3 pages this week — one slot is open. If you confirm today, your page goes live in 4 days. Otherwise the next slot is 10–12 days out.\""}]
+          },
+          {
+            speaker:"CLOSE #3 — Competitor Close",
+            speakerColor:"#DC2626", bg:"#FFF5F5", border:"#EF4444",
+            lines:[{text:"\"I'll be straight with you — a [same type of business] in your area is already using this page. When someone Googles it, their page comes up first, yours doesn't. I was actually building their page when I found you.\""}]
+          }
+        ],
+        tip:"Memorise all three closes. Use whichever fits the moment — no drama, just confidence."
+      },
+      {
+        tag:"Objections", label:"Replies — New Style", timing:"When they push back",
+        tagColor:"#6B7280", tagBg:"#F3F4F6", icon:"",
+        intro:"These objections came up with the old script because you were a salesman. Now you're a consultant — the replies are completely different.",
+        blocks:[
+          {speaker:"\"Not interested\"", speakerColor:"#DC2626", bg:"#FFF5F5", border:"#EF4444",
+            lines:[{text:"\"I wouldn't be either if someone called to sell me something random. That's not what I'm doing — I actually tried to use your business as a customer and saw what's missing. I'm just telling you what I found. 30 seconds?\""}]},
+          {speaker:"\"We have an in-house team\"", speakerColor:"#7C3AED", bg:"#F5F0FF", border:"#8B5CF6",
+            lines:[{text:"\"That's great — having an in-house team is a real advantage. Quick question: does the page they built show up in Google 'near me' searches? If yes, you don't need me at all. If not — they're building pages but no traffic is coming through.\""}]},
+          {speaker:"\"Call later / I'm busy\"", speakerColor:"#D97706", bg:"#FFFBEB", border:"#F59E0B",
+            lines:[{text:"\"Of course — when's a better time? Tomorrow morning at 10 or evening at 5? I'll call exactly then.\" [Get a specific commitment — never leave it as a vague 'later']"}]},
+          {speaker:"Rude / Hangs up", speakerColor:"#6B7280", bg:"#F9FAFB", border:"#D1D5DB",
+            lines:[{text:"Say nothing. Log it. Dial the next one. They weren't your client — the next one is. One rude call = 10 second reset, then move on."}]}
+        ],
+        tip:"'Not interested' drops by 60% with the mystery caller approach — because you never opened as a salesman."
+      }
+    ]
+  }
+};
+
+let lang = 'ur';
+let currentPhase = 0;
+let currentCat = 0;
+
+function setLang(l, btn) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('headerSub').textContent = DATA[lang].headerSub;
+  document.getElementById('catLabel').textContent = DATA[lang].catLabel;
+  currentPhase = 0;
+  currentCat = 0;
+  renderCats();
+  renderTabs();
+  renderContent();
+}
+
+function setCat(i, btn) {
+  currentCat = i;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderContent();
+}
+
+function renderCats() {
+  const d = DATA[lang];
+  const wrap = document.getElementById('catBtns');
+  wrap.innerHTML = d.cats.map((c,i) =>
+    `<button class="cat-btn${i===currentCat?' active':''}" onclick="setCat(${i},this)">${d.catIcons[i]} ${c}</button>`
+  ).join('');
+}
+
+function renderTabs() {
+  const d = DATA[lang];
+  document.getElementById('phaseTabs').innerHTML = d.phases.map((p,i) =>
+    `<button class="tab-btn${i===currentPhase?' active':''}" onclick="goPhase(${i})">${p.icon} ${p.tag}</button>`
+  ).join('');
+}
+
+function renderContent() {
+  const d = DATA[lang];
+  const p = d.phases[currentPhase];
+  document.getElementById('catBar').style.display = currentPhase === 0 ? '' : 'none';
+
+  let html = `
+    <div class="phase-header" style="border-left:4px solid ${p.tagColor}">
+      <div class="phase-tag" style="background:${p.tagBg};color:${p.tagColor}">${p.tag} — ${p.label}</div>
+      <div class="phase-timing">${p.timing}</div>
+      <div class="phase-intro">${p.intro}</div>
+    </div>`;
+
+  p.blocks.forEach((block, bi) => {
+    const lines = block.catBased ? [block.lines[currentCat]] : block.lines;
+    html += `<div style="margin-bottom:12px">
+      <div class="block-label" style="color:${block.speakerColor}">${block.speaker}</div>`;
+    lines.forEach((line, li) => {
+      const id = `c_${bi}_${li}`;
+      const safe = line.text.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/"/g,'&quot;');
+      html += `
+        <div class="script-card" style="background:${block.bg};border-color:${block.border}">
+          ${line.cat ? `<div class="line-cat" style="color:${block.border}">${line.cat}</div>` : ''}
+          <div class="line-text">${line.text}</div>
+          <button class="copy-btn" id="${id}" onclick="copyText('${id}',\`${safe}\`)">COPY</button>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+
+  html += `
+    <div class="tip-box">
+      <div class="tip-icon">&#128161;</div>
+      <div class="tip-text"><strong>PRO TIP: </strong>${p.tip}</div>
+    </div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goPhase(${currentPhase-1})" ${currentPhase===0?'disabled':''}>&#8592; Previous</button>
+      <button class="nav-btn next" onclick="goPhase(${currentPhase+1})" ${currentPhase===d.phases.length-1?'disabled':''}>Next Phase &#8594;</button>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-track"><div class="progress-fill" style="width:${((currentPhase+1)/d.phases.length)*100}%"></div></div>
+      <div class="progress-label">Phase ${currentPhase+1} of ${d.phases.length}</div>
+    </div>`;
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function goPhase(i) {
+  const d = DATA[lang];
+  if(i < 0 || i >= d.phases.length) return;
+  currentPhase = i;
+  renderTabs();
+  renderContent();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function copyText(id, text) {
+  const clean = text.replace(/&quot;/g,'"');
+  navigator.clipboard.writeText(clean).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = clean; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+  const btn = document.getElementById(id);
+  if(btn){ btn.textContent='✓'; btn.classList.add('copied'); setTimeout(()=>{btn.textContent='COPY';btn.classList.remove('copied');},1800); }
+}
+
+function downloadPage() {
+  const blob = new Blob([document.documentElement.outerHTML],{type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'MA_Academy_Mystery_Caller_Script.html';
+  a.click();
+}
+
+renderCats();
+renderTabs();
+renderContent();
+</script>
+</body>
+</html>
